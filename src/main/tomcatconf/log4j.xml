@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//LOGGER" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+
+<!-- ===================================================================== -->
+<!--                       Log4j Configuration                             -->
+<!-- ===================================================================== -->
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+    <!-- ===================================================================== -->
+    <!--                   Application Loggers                                 -->
+    <!-- ===================================================================== -->
+
+    <!-- STDOUT appender : log to console -->
+    <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+             <param name="ConversionPattern" value="%d [%t] %-5p [%c] %x- %m%n"/>
+         </layout>
+    </appender>
+
+    <!-- JAMon appender : persist JAMon report -->
+    <appender name="JAMON" class="org.apache.log4j.rolling.RollingFileAppender">
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="FileNamePattern" value="${jboss.server.log.dir}/springsandbox_jamon-%d{yyyy-MM-dd-HH-mm}.csv"/>
+        </rollingPolicy>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%m%n"/>
+        </layout>
+    </appender>
+
+    <!-- ================================= -->
+    <!--         Create BV loggers         -->
+    <!-- ================================= -->
+    <logger name="com.scherzoteller">
+        <level value="DEBUG"/>
+    </logger>
+
+
+    <!-- Exception -->
+    <logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver">
+        <level value="DEBUG"/>
+    </logger>
+
+    <logger name="org.springframework.security.access.vote">
+        <level value="DEBUG"/>
+    </logger>
+
+    <!-- JAMon persister: define level to INFO to enable report generation at application shutdown -->
+    <logger name="com.scherzoteller.springsandbox.web.utils.jamon.JAMonPersister">
+        <level value="INFO" />
+        <appender-ref ref="JAMON" />
+    </logger>
+
+    <!-- Trace interceptor: define level to TRACE to enable logging -->
+    <logger name="org.springframework.aop.interceptor.SimpleTraceInterceptor">
+        <level value="TRACE"/>
+    </logger>
+    
+    <!-- don't log warnings from documentum due to deprecated crypto API -->
+    <logger name="net.sf.jasperreports">
+    	<level value="DEBUG"/>    	
+    </logger>
+
+    <!-- ================================= -->
+    <!--         Create BV loggers         -->
+    <!-- ================================= -->
+    <logger name="com.ibatis">
+        <level value="@log4j.level.sql.default@"/>
+    </logger>
+    <logger name="java.sql">
+        <level value="@log4j.level.sql.default@"/>
+    </logger>
+    <logger name="log4j.logger.java.sql.Statement">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="log4j.logger.java.sql.PreparedStatement">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="log4j.logger.java.sql.ResultSet">
+        <level value="DEBUG"/>
+    </logger>
+
+    <!-- ================================= -->
+    <!--      Setup the Root category      -->
+    <!-- ================================= -->
+    <root>
+        <priority value="WARN" />
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</log4j:configuration>

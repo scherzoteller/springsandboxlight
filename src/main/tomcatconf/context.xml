@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context>
+	<!--
+	-->
+	<!-- INT -->
+	<!--
+		<Resource
+			name="jdbc/myportalDS"
+			auth="Container"
+			type="javax.sql.DataSource"
+			username="MY_PORTAL"
+			password="My_P0RTAL_1NT"
+			driverClassName="oracle.jdbc.driver.OracleDriver"
+			url="jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=smsfrndc01sidb1.eua.bvcorp.corp)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=SIEINFIN_PCM)))"
+			maxActive="8"
+			maxIdle="8" />
+			-->
+
+	<!-- PRE-INT -->
+	<!--
+		<Resource
+			name="jdbc/myportalDS"
+			auth="Container"
+			type="javax.sql.DataSource"
+			username="MY_PORTAL"
+			password="My_P0RTAL_1NT"
+			driverClassName="oracle.jdbc.driver.OracleDriver"
+			url="jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=SMSFRNDC01ORAR7.eua.bvcorp.corp)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=SIEINFPI_PCM)))"
+			maxActive="8"
+			maxIdle="8" />
+			-->
+        
+	<!-- UAT (QUALIF)-->
+	<!--
+		<Resource
+			name="jdbc/myportalDS"
+			auth="Container"
+			type="javax.sql.DataSource"
+			username="MY_PORTAL"
+			password="My_P0RTAL_1QL"
+			driverClassName="oracle.jdbc.driver.OracleDriver"
+			url="jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=smsfrndc01sidb1.eua.bvcorp.corp)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=SIEINFQL_APP)))"
+			maxActive="8"
+			maxIdle="8" />
+		-->
+</Context>

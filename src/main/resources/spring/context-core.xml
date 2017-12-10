@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+<beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:security="http://www.springframework.org/schema/security"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+                        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+                        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.2.xsd
+                        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<!-- =========================================================================================================== -->
+	<!-- Important note: interceptors are configured to be applied in the following                                  -->
+	<!-- order: Trace - JAMon - Spring Security - Transaction                                                        -->
+	<!-- =========================================================================================================== -->
+
+	<!-- ============================== Properties Provider and Configurer ========================================= -->
+    <util:list id="propertiesLocations">
+        <value>classpath:sprsand_default.properties</value>
+        <value>classpath:sprsand_custom.properties</value>
+    </util:list>
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" ref="propertiesLocations" />
+        <property name="ignoreResourceNotFound" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+	</bean>
+
+    <bean id="propertiesProvider" class="com.scherzoteller.springsandbox.web.utils.spring.SysAndFilePropFactoryBean">
+        <property name="locations" ref="propertiesLocations" />
+        <property name="ignoreResourceNotFound" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+    </bean>
+
+	<!-- ===================================== Spring Configuration ================================================ -->
+
+	<!-- Activate Spring annotations -->
+	<context:annotation-config />
+
+	<!-- ================================= TraceInterceptor Configuration ========================================== -->
+	<bean id="traceAspectInterceptor" class="org.springframework.aop.interceptor.SimpleTraceInterceptor" />
+    
+	<aop:config>
+		<aop:pointcut id="tracePointcut" expression="execution(* com.scherzoteller.springsandbox.service..I*Service.*(..))" />
+		<aop:advisor pointcut-ref="tracePointcut" advice-ref="traceAspectInterceptor" order="10" />
+	</aop:config>
+
+	<!-- =================================== JAMon Configuration =================================================== -->
+	<bean id="jamonMonitoringAspectInterceptor"
+		class="org.springframework.aop.interceptor.JamonPerformanceMonitorInterceptor">
+		<property name="trackAllInvocations" value="true" />
+	</bean>
+
+	<aop:config>
+		<aop:pointcut id="jamonMonitoringPointcut"
+			expression="execution(* com.scherzoteller.springsandbox.service..I*Service.*(..))
+                     or execution(* com.scherzoteller.springsandbox.dao..I*DAO.*(..))" />
+
+		<aop:advisor pointcut-ref="jamonMonitoringPointcut"
+			advice-ref="jamonMonitoringAspectInterceptor" order="100" />
+	</aop:config>
+
+
+
+    <bean id="jamonPersister" class="com.scherzoteller.springsandbox.web.utils.jamon.JAMonPersister" />
+
+    <!-- ApplicationStateResolver -->
+    <!--
+    <bean class="com.scherzoteller.myportal.security.ApplicationStateResolver" />
+    -->
+
+    <!-- =========================================================================================================== -->
+    <!--                           Formatting Conversion Service                                                     -->
+    <!-- =========================================================================================================== -->
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <set></set>
+        </property>
+    </bean>
+
+    <!-- ============================================================================== -->
+    <!--                                  I18N                                          -->
+    <!-- ============================================================================== -->
+	<!-- Resolves localized messages*.properties -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" >
+    	<!-- Resolves localized messages*.properties -->
+        <property name="basenames">
+        	<list>
+        	    <value>i18n/messages</value>
+        	</list>
+        </property>
+        <property name="defaultEncoding"         value="UTF-8" />
+        <property name="fallbackToSystemLocale"  value="false" />
+        <property name="useCodeAsDefaultMessage" value="true" />
+        <property name="alwaysUseMessageFormat"  value="true" />
+    </bean>
+    
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
+	<!--
+    <bean id="languageSiebelResolver" class="com.scherzoteller.myportal.utils.LanguageSiebelResolver">
+       <property name="siebelLanguagesByLocale">
+           <bean class="com.scherzoteller.myportal.utils.FilteredPropertiesFactoryBean">
+               <property name="locations">
+                   <list>
+                       <value>classpath:sprsand_default.properties</value>
+                       <value>classpath:sprsand_custom.properties</value>
+                   </list>
+               </property>
+               <property name="ignoreResourceNotFound"><value>true</value></property>
+               <property name="prefixFilter" value="myportal.siebel.language.mapping." />
+           </bean>
+       </property>
+   </bean>
+   -->
+   
+   
+    <!-- ============================================================================== -->
+    <!--                                  MAIL                                          -->
+    <!-- ============================================================================== -->
+    <!--
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${mail.smtp.host}" />
+        <property name="defaultEncoding" value="${mail.charset}" />
+    </bean>
+    -->
+    
+    <!-- ============================================================================== -->
+    <!--  SpringBeansStaticAccessor: provides a static access to Spring beans           -->
+    <!-- ============================================================================== -->
+	<bean id="pcmConfig"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+                <value>classpath:sprsand_default.properties</value>
+                <value>classpath:sprsand_custom.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!--
+	<bean id="springBeansStaticAccessor_fillProperties" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="com.scherzoteller.myportal.commons.utils.SpringBeansStaticAccessor.fillProperties"/>
+        <property name="arguments">
+		    <ref bean="pcmConfig" />
+        </property>
+    </bean>
+	<bean id="springBeansStaticAccessor_fillOtherBeans" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="com.scherzoteller.myportal.commons.utils.SpringBeansStaticAccessor.fillOtherBeans"/>
+        <property name="arguments">
+        	<list>
+			    <ref bean="localeResolver" />
+			    <ref bean="messageSource" />
+			    <ref bean="languageSiebelResolver" />
+			</list>
+        </property>
+    </bean>
+    -->
+    
+    
+</beans>

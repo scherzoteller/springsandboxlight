@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:security="http://www.springframework.org/schema/security"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+                        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+                        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.2.xsd
+                        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd
+                        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.2.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+                        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+                        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
+
+    <!-- =========================================================================================================== -->
+    <!--                       Transaction Manager for Services                                                      -->
+    <!-- =========================================================================================================== -->
+    <!--
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+        <property name="defaultTimeout" value="${myportal.db.transaction.timeout}" />
+	</bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager" >
+        <tx:attributes>
+            <tx:method name="create*"   propagation="REQUIRED" />
+            <tx:method name="update*"   propagation="REQUIRED" />
+            <tx:method name="cancel*"   propagation="REQUIRED" />
+            <tx:method name="delete*"   propagation="REQUIRED" />
+            <tx:method name="remove*"   propagation="REQUIRED" />
+            <tx:method name="store*"    propagation="REQUIRED" />
+            <tx:method name="save*"     propagation="REQUIRED" />
+            <tx:method name="add*"      propagation="REQUIRED" />
+            <tx:method name="change*"   propagation="REQUIRED" />
+            <tx:method name="assign*"   propagation="REQUIRED" />
+            <tx:method name="reassign*" propagation="REQUIRED" />
+            <tx:method name="fill*"     propagation="REQUIRED" />
+            <tx:method name="review*"   propagation="REQUIRED" />
+            <tx:method name="reject*"   propagation="REQUIRED" />
+            <tx:method name="approve*"  propagation="REQUIRED" />
+            <tx:method name="*"         propagation="SUPPORTS" read-only="true" />
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="defaultServiceOperation" expression="execution(* com.scherzoteller.springsandbox.service..I*Service.*(..))"/>
+        <aop:advisor pointcut-ref="defaultServiceOperation" advice-ref="txAdvice" order="300" />
+    </aop:config>
+    -->
+
+    <!-- =========================================================================================================== -->
+    <!--                                           Services                                                          -->
+    <!-- =========================================================================================================== -->
+
+    <!-- Parent Service configuration -->
+    <bean id="parentService" abstract="true" />
+
+    <bean id="testFutureService" 				class="com.scherzoteller.springsandbox.service.testfuture.impl.TestFutureService"            parent="parentService" />
+    
+</beans>
